@@ -1,14 +1,5 @@
-{% load static %}
-
-<!DOCTYPE html>
-<html lang="eng-US">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <title>Pitchfork to Spotify</title>
-</head>
+{% extends "base.html" %}
+{% block page_content %}
 
 <body>
     <header>
@@ -19,4 +10,4 @@
     </header>
 </body>
 
-</html>
+{% endblock %}
