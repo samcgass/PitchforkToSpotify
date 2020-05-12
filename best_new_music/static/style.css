@@ -40,3 +40,10 @@ body {
     top:1px;
 }
 
+.hidden {
+    display: none;
+}
+
+input[type=checkbox]:checked + label.strike {
+    text-decoration: line-through;
+}
