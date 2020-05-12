@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="eng-US">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Pitchfork to Spotify</title>
+</head>
+
+<body>
+    <header>
+        <h1>Albums to be Added</h1>
+
+        <form action="/best-new-music/added/" method="POST">
+            {% csrf_token %}
+            {% for album in albums %}
+            <input type="checkbox" name="{{ album.album }}" id="{{ album.album }}">
+            <label for="{{ album.album }}">{{ album.album }} by {{ album.artist }}</label><br>
+            {% endfor %}
+            <input type="submit" value="Add">
+        </form>
+    </header>
+</body>
+
+</html>
