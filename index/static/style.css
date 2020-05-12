@@ -1,20 +1,20 @@
-html, body {
+html {
     background-color: #fff2e6;
-    height: 100%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-h1 {
-    height: 125px;
-    font-size: 55px;
-}
-
 body {
-    display: flex;
+    display: block;
     align-items: center;
     justify-content: center;
     text-align: center;
     font-size: 26px;
+}
+
+h1 {
+    display: block;
+    height: auto;
+    font-size: 55px;
 }
 
 .button {
@@ -40,3 +40,10 @@ body {
     top:1px;
 }
 
+.hidden {
+    display: none;
+}
+
+input[type=checkbox]:checked + label.strike {
+    text-decoration: line-through;
+}

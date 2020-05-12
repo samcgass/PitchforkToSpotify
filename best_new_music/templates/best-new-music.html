@@ -4,7 +4,8 @@
 <body>
     <header>
         <h1>Albums to be Added</h1>
-
+    </header>
+    <main>
         <form action="/best-new-music/added/" method="POST">
             <div class="albums">
                 {% csrf_token %}
@@ -15,7 +16,8 @@
             </div>
             <input class="button" type="submit" value="Add">
         </form>
-    </header>
+    </main>
+
 </body>
 
 {% endblock %}

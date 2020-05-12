@@ -4,7 +4,8 @@
 <body>
     <header>
         <h1>Albums to be Added</h1>
-
+    </header>
+    <main>
         <form action="/highly-rated/added/" method="POST">
             {% csrf_token %}
             {% for album in albums %}
@@ -13,7 +14,7 @@
             {% endfor %}
             <input class="button" type="submit" value="Add">
         </form>
-    </header>
+    </main>
 </body>
 
 {% endblock %}
