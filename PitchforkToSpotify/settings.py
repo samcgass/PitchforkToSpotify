@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'highlyRated',
     'index',
     'best_new_music',
+    'databases',
 ]
 
 MIDDLEWARE = [
