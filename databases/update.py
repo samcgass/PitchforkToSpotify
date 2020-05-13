@@ -31,6 +31,11 @@ class MyParser(HTMLParser):
     def error(self, message):
         pass
 
+    def clear(self):
+        self.albums = []
+        self.artists = []
+        self.dates = []
+
 
 def combine(list1, list2, list3):
     one_list = []
@@ -41,6 +46,7 @@ def combine(list1, list2, list3):
 
 def getArtistsAndAlbums(all_highly_rated, page):
     parser = MyParser()
+    parser.clear()
     if all_highly_rated:
         res = get(
             "https://pitchfork.com/best/high-scoring-albums/?page=" + str(page))
