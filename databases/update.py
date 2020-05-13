@@ -1,6 +1,5 @@
 from html.parser import HTMLParser
 from requests import get
-from databases.models import AllHighlyRatedAlbums, AllBestNewMusic
 
 
 class MyParser(HTMLParser):
@@ -8,12 +7,18 @@ class MyParser(HTMLParser):
     nextDataIsArtist = False
     albums = []
     artists = []
+    dates = []
 
     def handle_starttag(self, tag, attrs):
         if ("class", "review__title-album") in attrs:
             self.nextDataIsAlbum = True
         elif ("class", "artist-list review__title-artist") in attrs:
             self.nextDataIsArtist = True
+        elif ("class", "pub-date") in attrs:
+            for attr in attrs:
+                if attr[0] == "datetime":
+                    self.dates.append(attr[1])
+                    break
 
     def handle_data(self, data):
         if self.nextDataIsAlbum:
@@ -27,9 +32,9 @@ class MyParser(HTMLParser):
         pass
 
 
-def combine(list1, list2):
+def combine(list1, list2, list3):
     one_list = []
-    for pair in zip(list1, list2):
+    for pair in zip(list1, list2, list3):
         one_list.append(pair)
     return one_list
 
@@ -42,7 +47,6 @@ def getArtistsAndAlbums(all_highly_rated, page):
     else:
         res = get("https://pitchfork.com/reviews/best/albums/?page=" + str(page))
     parser.feed(res.text)
-    artists_albums = combine(parser.artists, parser.albums)
+    artists_albums = combine(parser.artists, parser.albums, parser.dates)
     parser.close()
     return artists_albums, res.status_code
-
