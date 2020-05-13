@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("index.urls")),
     path('highly-rated/', include("highlyRated.urls")),
-    path('best-new-music/', include("best_new_music.urls"))
+    path('best-new-music/', include("best_new_music.urls")),
+    path('update/', include("databases.urls"))
 ]
