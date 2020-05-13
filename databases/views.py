@@ -1,12 +1,15 @@
 from django.shortcuts import render
+from django.utils.dateparse import parse_datetime
 from databases.models import AllBestNewMusic, AllHighlyRatedAlbums
 from databases.update import getArtistsAndAlbums
-from django.utils.dateparse import parse_datetime
 
 
 def update(request):
-    updateDatabases()
-    return render(request, "update.html")
+    try:
+        updateDatabases()
+        return render(request, "update.html")
+    except:  # pylint: disable=bare-except
+        return render(request, "error.html")
 
 
 def updateHighlyRatedDatabases():
