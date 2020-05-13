@@ -2,27 +2,27 @@ from json import loads
 from django.shortcuts import render
 from requests import get, put
 from best_new_music.models import best_new_music
-from best_new_music.getPitchfork import getArtistsAndAlbums
 from index.models import Tokens
 from index.get_ip import get_client_ip
+from databases.models import AllBestNewMusic
+from databases.views import updateDatabases
 
 
 def bestnewmusic(request):
-    text_albums = getArtistsAndAlbums()
-    while len(text_albums) > 10:
-        text_albums.pop(-1)
+    updateDatabases()
+    text_albums = AllBestNewMusic.objects.all().order_by('-date')[:10]
     ip_address = get_client_ip(request)
     access_token = Tokens.objects.get(ip_address=ip_address).access_token
     for album in text_albums:
         head = {"authorization": "Bearer " + access_token}
-        parms = {"q": "album:" + album[1] + " artist:" + album[0],
+        parms = {"q": "album:" + album.album + " artist:" + album.artist,
                  "type": "album", "market": "US", "limit": "1", "offset": "0"}
         result = loads(get("https://api.spotify.com/v1/search",
                            params=parms, headers=head).text)
         try:
             alb = best_new_music(
-                album=album[1],
-                artist=album[0],
+                album=album.album,
+                artist=album.artist,
                 spotifyID=result["albums"]["items"][0]["id"],
                 ip_address=ip_address,
             )
