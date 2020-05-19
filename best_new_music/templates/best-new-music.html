@@ -4,6 +4,7 @@
 <body>
     <header>
         <h1>Albums to be Added</h1>
+        <h6>If you do not want one of these albums added to your library, select it to remove it from the list.</h6>
     </header>
     <main>
         <form action="/best-new-music/added/" method="POST">
@@ -15,7 +16,7 @@
                 {% endfor %}
             </div>
             <input class="button" type="submit" value="Show More" formaction="/best-new-music/?page={{ page }}">
-            <input class="button" type="submit" value="Add">
+            <input class="button" type="submit" value="Done">
         </form>
     </main>
 

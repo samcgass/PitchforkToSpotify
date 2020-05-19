@@ -94,11 +94,11 @@ def added(request):
         result = put("https://api.spotify.com/v1/me/albums?" +
                      ids, headers=head)
         if result.status_code >= 200:
-            outcome = "added albums to library"
+            outcome = "Successfully added albums to your Spotify library"
         else:
-            outcome = "unable to add to library"
+            outcome = "Unable to add albums to your Spotify library"
     else:
-        outcome = "all albums already in library"
+        outcome = "All selected albums were already in your Spotify library"
     context = {
         "outcome": outcome
     }
