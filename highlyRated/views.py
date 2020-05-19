@@ -9,10 +9,27 @@ from databases.views import updateDatabases
 
 
 def highly_rated(request):
-    updateDatabases()
-    text_albums = AllHighlyRatedAlbums.objects.all().order_by('-date')[:10]
     ip_address = get_client_ip(request)
     access_token = Tokens.objects.get(ip_address=ip_address).access_token
+
+    if request.method == 'POST':
+        for album in request.POST:
+            try:
+                HighlyRatedAlbums.objects.get(
+                    ip_address=ip_address, album=album).delete()
+            except HighlyRatedAlbums.DoesNotExist:
+                continue
+
+    if 'page' in request.GET:
+        page = int(request.GET['page'])
+    else:
+        updateDatabases()
+        page = 1
+
+    upperbound = int(10 * page)
+    lowerbound = upperbound - 10
+    text_albums = AllHighlyRatedAlbums.objects.all().order_by(
+        '-date')[lowerbound:upperbound]
     for album in text_albums:
         head = {"authorization": "Bearer " + access_token}
         parms = {"q": "album:" + album.album + " artist:" + album.artist,
@@ -27,12 +44,13 @@ def highly_rated(request):
                 ip_address=ip_address,
             )
             alb.save()
-        except KeyError:
+        except (KeyError, IndexError):
             continue
 
-    albums = HighlyRatedAlbums.objects.filter(ip_address=ip_address)[:10]
+    page += 1
     context = {
-        "albums": albums,
+        "albums": text_albums,
+        "page": page,
     }
 
     return render(request, "highly-rated.html", context)
@@ -41,12 +59,16 @@ def highly_rated(request):
 def added(request):
     ip_address = get_client_ip(request)
     tokens = Tokens.objects.get(ip_address=ip_address)
-    skip_these = request.POST
+    for album in request.POST:
+        try:
+            HighlyRatedAlbums.objects.get(
+                ip_address=ip_address, album=album).delete()
+        except HighlyRatedAlbums.DoesNotExist:
+            continue
+
     ids = "ids="
     id_list = []
-    for album in HighlyRatedAlbums.objects.filter(ip_address=ip_address)[:10]:
-        if album.album in skip_these:
-            continue
+    for album in HighlyRatedAlbums.objects.filter(ip_address=ip_address):
         id_list.append(album.spotifyID)
     for id_num in id_list:
         ids += id_num + ','

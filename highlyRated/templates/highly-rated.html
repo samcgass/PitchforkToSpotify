@@ -12,6 +12,7 @@
             <input class="hidden" type="checkbox" name="{{ album.album }}" id="{{ album.album }}">
             <label class="strike" for="{{ album.album }}">{{ album.album }} | {{ album.artist }}</label><br><br>
             {% endfor %}
+            <input class="button" type="submit" value="Show More" formaction="/highly-rated/?page={{ page }}">
             <input class="button" type="submit" value="Add">
         </form>
     </main>
