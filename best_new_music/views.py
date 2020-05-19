@@ -9,10 +9,28 @@ from databases.views import updateDatabases
 
 
 def bestnewmusic(request):
-    updateDatabases()
-    text_albums = AllBestNewMusic.objects.all().order_by('-date')[:10]
     ip_address = get_client_ip(request)
     access_token = Tokens.objects.get(ip_address=ip_address).access_token
+
+    if request.method == 'POST':
+        for album in request.POST:
+            try:
+                best_new_music.objects.get(
+                    ip_address=ip_address, album=album).delete()
+            except best_new_music.DoesNotExist:
+                continue
+
+    if 'page' in request.GET:
+        page = int(request.GET['page'])
+    else:
+        updateDatabases()
+        page = 1
+
+    upperbound = int(10 * page)
+    lowerbound = upperbound - 10
+    text_albums = AllBestNewMusic.objects.all().order_by(
+        '-date')[lowerbound:upperbound]
+
     for album in text_albums:
         head = {"authorization": "Bearer " + access_token}
         parms = {"q": "album:" + album.album + " artist:" + album.artist,
@@ -27,12 +45,13 @@ def bestnewmusic(request):
                 ip_address=ip_address,
             )
             alb.save()
-        except KeyError:
+        except (KeyError, IndexError):
             continue
 
-    albums = best_new_music.objects.filter(ip_address=ip_address)[:10]
+    page += 1
     context = {
-        "albums": albums,
+        "albums": text_albums,
+        "page": page,
     }
 
     return render(request, "best-new-music.html", context)
@@ -41,12 +60,16 @@ def bestnewmusic(request):
 def added(request):
     ip_address = get_client_ip(request)
     tokens = Tokens.objects.get(ip_address=ip_address)
-    skip_these = request.POST
+    for album in request.POST:
+        try:
+            best_new_music.objects.get(
+                ip_address=ip_address, album=album).delete()
+        except best_new_music.DoesNotExist:
+            continue
+
     ids = "ids="
     id_list = []
-    for album in best_new_music.objects.filter(ip_address=ip_address)[:10]:
-        if album.album in skip_these:
-            continue
+    for album in best_new_music.objects.filter(ip_address=ip_address):
         id_list.append(album.spotifyID)
     for id_num in id_list:
         ids += id_num + ','

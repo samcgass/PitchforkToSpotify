@@ -14,6 +14,7 @@
                 <label class="strike" for="{{ album.album }}">{{ album.album }} | {{ album.artist }}</label><br><br>
                 {% endfor %}
             </div>
+            <input class="button" type="submit" value="Show More" formaction="/best-new-music/?page={{ page }}">
             <input class="button" type="submit" value="Add">
         </form>
     </main>
