@@ -24,6 +24,7 @@ def bestnewmusic(request):
         page = int(request.GET['page'])
     else:
         updateDatabases()
+        best_new_music.objects.filter(ip_address=ip_address).delete()
         page = 1
 
     upperbound = int(10 * page)
@@ -32,21 +33,25 @@ def bestnewmusic(request):
         '-date')[lowerbound:upperbound]
 
     for album in text_albums:
-        head = {"authorization": "Bearer " + access_token}
-        parms = {"q": "album:" + album.album + " artist:" + album.artist,
-                 "type": "album", "market": "US", "limit": "1", "offset": "0"}
-        result = loads(get("https://api.spotify.com/v1/search",
-                           params=parms, headers=head).text)
         try:
-            alb = best_new_music(
-                album=album.album,
-                artist=album.artist,
-                spotifyID=result["albums"]["items"][0]["id"],
-                ip_address=ip_address,
-            )
-            alb.save()
-        except (KeyError, IndexError):
+            best_new_music.objects.get(album=album.album, artist=album.artist)
             continue
+        except best_new_music.DoesNotExist:
+            head = {"authorization": "Bearer " + access_token}
+            parms = {"q": "album:" + album.album + " artist:" + album.artist,
+                     "type": "album", "market": "US", "limit": "1", "offset": "0"}
+            result = loads(get("https://api.spotify.com/v1/search",
+                               params=parms, headers=head).text)
+            try:
+                alb = best_new_music(
+                    album=album.album,
+                    artist=album.artist,
+                    spotifyID=result["albums"]["items"][0]["id"],
+                    ip_address=ip_address,
+                )
+                alb.save()
+            except (KeyError, IndexError):
+                continue
 
     page += 1
     context = {

@@ -24,6 +24,7 @@ def highly_rated(request):
         page = int(request.GET['page'])
     else:
         updateDatabases()
+        HighlyRatedAlbums.objects.filter(ip_address=ip_address).delete()
         page = 1
 
     upperbound = int(10 * page)
@@ -31,21 +32,26 @@ def highly_rated(request):
     text_albums = AllHighlyRatedAlbums.objects.all().order_by(
         '-date')[lowerbound:upperbound]
     for album in text_albums:
-        head = {"authorization": "Bearer " + access_token}
-        parms = {"q": "album:" + album.album + " artist:" + album.artist,
-                 "type": "album", "market": "US", "limit": "1", "offset": "0"}
-        result = loads(get("https://api.spotify.com/v1/search",
-                           params=parms, headers=head).text)
         try:
-            alb = HighlyRatedAlbums(
-                album=album.album,
-                artist=album.artist,
-                spotifyID=result["albums"]["items"][0]["id"],
-                ip_address=ip_address,
-            )
-            alb.save()
-        except (KeyError, IndexError):
+            HighlyRatedAlbums.objects.get(
+                album=album.album, artist=album.artist)
             continue
+        except HighlyRatedAlbums.DoesNotExist:
+            head = {"authorization": "Bearer " + access_token}
+            parms = {"q": "album:" + album.album + " artist:" + album.artist,
+                     "type": "album", "market": "US", "limit": "1", "offset": "0"}
+            result = loads(get("https://api.spotify.com/v1/search",
+                               params=parms, headers=head).text)
+            try:
+                alb = HighlyRatedAlbums(
+                    album=album.album,
+                    artist=album.artist,
+                    spotifyID=result["albums"]["items"][0]["id"],
+                    ip_address=ip_address,
+                )
+                alb.save()
+            except (KeyError, IndexError):
+                continue
 
     page += 1
     context = {
