@@ -58,7 +58,7 @@ ROOT_URLCONF = 'PitchforkToSpotify.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['C:/Users/bamas/Documents/Personal Projects/DjangoPitchforkToSpotify/PitchforkToSpotify/templates'],
+        'DIRS': ['/Users/sam/Documents/Personal Projects/DjangoPitchforkToSpotify/PitchforkToSpotify/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

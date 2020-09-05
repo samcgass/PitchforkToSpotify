@@ -1,7 +1,0 @@
-#!c:\users\bamas\documents\personal projects\djangopitchforktospotify\venv\scripts\python.exe
-
-import warnings
-warnings.simplefilter('default', DeprecationWarning)
-
-from logilab.common.pytest import run
-run()

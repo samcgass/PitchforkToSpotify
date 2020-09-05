@@ -6,5 +6,7 @@
         "--disable=C0114",
         "--disable=C0115",
         "--load-plugins=pylint_django",
-    ]
+    ],
+    "git.ignoreLimitWarning": true,
+    "python.pythonPath": "/Users/sam/Documents/Personal Projects/DjangoPitchforkToSpotify/venv/bin/python3"
 }
